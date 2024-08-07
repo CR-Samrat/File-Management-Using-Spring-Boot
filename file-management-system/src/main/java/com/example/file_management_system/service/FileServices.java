@@ -50,7 +50,7 @@ public class FileServices {
         return directory.list();
     }
 
-    public File downloadFile(String fileName) throws Exception{
+    public File downloadFile(String fileName){
         Boolean isPresent = Arrays.stream(this.getFiles())
                                     .toList().contains(fileName);
 
@@ -59,6 +59,24 @@ public class FileServices {
 
             if(file.getParent().equals(STORAGE_PATH)){
                 return file;
+            }else{
+                throw new InvalidFileName(fileName);
+            }
+        }else{
+            throw new FileNotFoundException(fileName);
+        }
+    }
+
+    public String[] deleteFile(String fileName){
+        Boolean isPresent = Arrays.stream(this.getFiles())
+                                    .toList().contains(fileName);
+
+        if(isPresent){
+            var file = new File(STORAGE_PATH + File.separator + fileName);
+
+            if(file.getParent().equals(STORAGE_PATH)){
+                file.delete();
+                return this.getFiles();
             }else{
                 throw new InvalidFileName(fileName);
             }

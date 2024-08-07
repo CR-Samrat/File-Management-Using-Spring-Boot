@@ -16,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @RestController
 @RequestMapping("/file")
+@CrossOrigin
 public class FileController {
 
     @Autowired
@@ -47,7 +49,7 @@ public class FileController {
     }
 
     @GetMapping("/download/{file_name}")
-    public ResponseEntity<?> downloadFile(@PathVariable("file_name") String fileName) throws Exception{
+    public ResponseEntity<?> downloadFile(@PathVariable("file_name") String fileName){
         var file = this.services.downloadFile(fileName);
 
         return ResponseEntity.ok()
@@ -55,5 +57,13 @@ public class FileController {
                             .contentLength(file.length())
                             .contentType(MediaType.APPLICATION_OCTET_STREAM)
                             .body(new FileSystemResource(file));
+    }
+
+    @GetMapping("/delete/{file_name}")
+    public ResponseEntity<?> deleteFile(@PathVariable("file_name") String fileName){
+        List<String> files = Arrays.stream(this.services.deleteFile(fileName)).toList();
+
+        return ResponseEntity.ok()
+                            .body(files);
     }
 }
